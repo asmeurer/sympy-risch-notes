@@ -100,7 +100,7 @@ Accept (or veto) these taste calls in `restore_sincos()` /
 **2026-09-18:** both flaws reproduce on master through `integrate()`,
 plus a third: the `cot` correction has the wrong sign (doubles the jump;
 also still present on this branch).  Issue text drafted in
-`ISSUE_atan_floor.md` for Aaron to post.
+[ISSUE_atan_floor.md](ISSUE_atan_floor.md) for Aaron to post.
 
 Two flaws in `Integral.doit()`’s atan floor pass are **pre-existing
 linear-case semantics** that the odd-degree extension deliberately

@@ -55,8 +55,8 @@ capability is the experimental branch's.
 
 | branch | sympy commit | date | oracle-checked SOLVED | WRONG | source |
 |---|---|---|---|---|---|
-| risch-algebraic, pre-fix | `a1c2226052` | 2026-08-15..16 | 4,239 | 1,705 (40%) | [run log, Run 12](algebraic-run-log.md#run-12-full-corpus-pre-fix-audit-worktree-a1c2226052); [per-case table](rubi-prefix-audit-wrong.md) |
-| risch-algebraic, post-fix | `97ef0340ca` / `518d57ad37` | 2026-08-17..18 | **4,286** | **0** | [run log, Run 13](algebraic-run-log.md#run-13-post-fix-re-sweep-t_1-worktree-97ef0340ca) |
+| risch-algebraic, pre-fix | `a1c2226052` | 2026-08-15..18 (Runs 11-13) | 4,239 | 1,705 (40%) | [run log, Run 12](algebraic-run-log.md#run-12-full-corpus-pre-fix-audit-worktree-a1c2226052); [per-case table](rubi-prefix-audit-wrong.md) |
+| risch-algebraic, post-fix | `97ef0340ca` / `518d57ad37` | 2026-08-15..18 (Runs 11-13) | **4,286** | **0** | [run log, Run 13](algebraic-run-log.md#run-13-post-fix-re-sweep-t_1-worktree-97ef0340ca) |
 
 - The 1,705 wrong answers were the unconditional radicand split and the
   `is_deriv_k` principal-constant rewrite; the exact-branch-ratio fixes
