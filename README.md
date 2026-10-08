@@ -43,9 +43,8 @@ The corpora and the runner are
 
 ## Updating
 
-The `docs/` files are the working copies: the sympy checkout's untracked
-`RISCH_*.md` / `BRONSTEIN_ERRATA.md` are symlinks into a clone of this
-repository.  Commit and push in the same turn as any edit; see
+The `docs/` files are the working copies; nothing is kept in the sympy
+checkout any more.  Commit and push in the same turn as any edit; see
 [runs/README.md](runs/README.md#adding-a-run) for how to record a run.
 
 ## Frozen gists

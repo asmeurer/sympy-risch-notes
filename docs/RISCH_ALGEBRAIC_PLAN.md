@@ -577,8 +577,8 @@ coefficients.
   Bonazzi regularly if questions come up).
 - This file, `RISCH_PLAN.md`, `RISCH_DECISIONS.md` and
   `BRONSTEIN_ERRATA.md` live in `docs/` of
-  https://github.com/asmeurer/sympy-risch-notes (the sympy checkout's
-  root copies are symlinks into a clone of it); the run log-book is
+  https://github.com/asmeurer/sympy-risch-notes (nothing is kept in
+  the sympy checkout any more); the run log-book is
   `runs/algebraic-run-log.md` there, with the current state in
   `runs/README.md` and per-case data under `runs/data/`.  Commit and
   push in the same turn as any edit: the session scratchpad was wiped
