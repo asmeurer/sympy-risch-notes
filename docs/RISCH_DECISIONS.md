@@ -142,5 +142,5 @@ Options, any order:
   earlier session; assess/close?
 - the **signum implementation** for branch-correct algebraic integration
   (Jeffrey 1993 domain-of-maximum-extent; prototype verified 2026-08-13,
-  see RISCH_ALGEBRAIC_PLAN.md and the runs gist) — awaiting go-ahead
+  see RISCH_ALGEBRAIC_PLAN.md and `runs/algebraic-run-log.md`) — awaiting go-ahead
   since 2026-08-13.

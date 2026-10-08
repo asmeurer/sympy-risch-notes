@@ -10,7 +10,7 @@ Status: **both items implemented and corpus-verified** (2026-08-15/16
 session); see §6.  Final measurement: the pre-fix branch had 1,705
 wrong answers among 4,239 corpus solves (40%); the fixed branch
 (`518d57ad37`) has **zero** among 4,287 (net +48 solves, median
-per-case time unchanged).  Runs 11-13 in the run gist.
+per-case time unchanged).  Runs 11-13 in `runs/algebraic-run-log.md`.
 
 **2026-08-21: restacked onto the rde branch-cut fixes.**  The 29
 commits since the common base were replayed onto
@@ -185,7 +185,7 @@ when not), an end-to-end `test_risch.py` regression for
 checked numerically), and a Float-skip test.  The `residue_reduce()`
 `NotInvertible` fallback is corpus-verified only: a fresh full
 3,154-case Blake sweep on the pre-relaxation commit at the
-`risch_integrate(f, x)` entry point (`pretip-blake.jsonl`) found 485
+`risch_integrate(f, x)` entry point (`runs/data/pretip-blake-abort-census.jsonl`) found 485
 `parametric_log_deriv` aborts, 286 solved, 197 timeouts (8 s) and
 **zero** `NotInvertible` -- the 5 crashes recorded in the branch
 comparison came through a different entry point (its `i` indices
@@ -310,8 +310,8 @@ about 1,357 integrals solved that non-Risch `integrate()` cannot do,
 2,771 solved by both, zero false nonelementary claims.  Timing: solved
 cases have a 0.09-0.26 s median; roughly 2% of cases exceed 300 s, all
 in bounded-arithmetic sites (no loops).  Full details, per-case tables
-and the run log-book:
-https://gist.github.com/asmeurer/b4b8ceb7c364566f5e7a3d07ce133300
+and the run log-book: `runs/` in
+https://github.com/asmeurer/sympy-risch-notes
 
 ### The acceptance filter (already implemented)
 
@@ -476,7 +476,7 @@ Every mismatch should be classified, not just counted:
   chapters as a control -- this re-audits everything already landed,
   including the pre-normalization solves.
 - Publish the mismatch table (SymPy expression, our answer, expected
-  answer, classification) as a new page in the run gist.
+  answer, classification) as a new page under `runs/`.
 - File a regression test in sympy for every confirmed wrong answer.
 
 ---
@@ -519,7 +519,7 @@ coefficients.
 
 ### 4.3 Prototype evidence (verified this session)
 
-`signum_proto2.py`, attached to the run gist.  Results:
+`signum_proto2.py`, in the frozen run gist.  Results:
 
 - Jeffrey's Example 1 reproduced exactly: `3*x**2*sqrt(1 + 1/x**2)`
   -> `sgn(x)*((1 + x**2)**(3/2) - 1)`, with `J = 1`.
@@ -575,19 +575,15 @@ coefficients.
   https://github.com/Upabjojr/rubi-integration-test-suite/pull/1
   (opened as Claude at Aaron's direction; Aaron meets Francesco
   Bonazzi regularly if questions come up).
-- Run log-book gist (append each run as a new section, attach raw
-  logs):
-  https://gist.github.com/asmeurer/b4b8ceb7c364566f5e7a3d07ce133300
-- `RISCH_PLAN.md` gist:
-  https://gist.github.com/asmeurer/bed00aa257ef69b2688bbc9333da9a0d
-- `BRONSTEIN_ERRATA.md` gist:
-  https://gist.github.com/asmeurer/eb4c9d3e6253372d2b3e1bd4438721d3
-- This file's gist:
-  https://gist.github.com/asmeurer/5ad380f4ed1cdd573e6328ffd0d8a947
-- All four files are untracked in the repo and mirrored to gists;
-  update the gist in the same turn as any edit.  The session scratchpad
-  was wiped once mid-session and only the gist copies survived, so the
-  gists are the durable location, not the working tree.
+- This file, `RISCH_PLAN.md`, `RISCH_DECISIONS.md` and
+  `BRONSTEIN_ERRATA.md` live in `docs/` of
+  https://github.com/asmeurer/sympy-risch-notes (the sympy checkout's
+  root copies are symlinks into a clone of it); the run log-book is
+  `runs/algebraic-run-log.md` there, with the current state in
+  `runs/README.md` and per-case data under `runs/data/`.  Commit and
+  push in the same turn as any edit: the session scratchpad was wiped
+  once mid-session and only the published copies survived, so the
+  repository is the durable location, not the working tree.
 
 ### Conventions learned the hard way
 
@@ -751,7 +747,7 @@ changes the root set and no value check can see it.
 
 ### The full pre-fix audit and the second bug class (2026-08-15 late)
 
-The item-1 audit completed (Run 12 in the run gist, per-case table
+The item-1 audit completed (Run 12 in `runs/algebraic-run-log.md`, per-case table
 `rubi-audit-wrong.md` there): of 4,239 solved cases on the pre-fix
 branch, **1,705 (40%) had wrong derivatives** -- 1,684 the radicand
 split, 13 split-at-complex-points, and **8 of a novel class the audit
@@ -795,7 +791,7 @@ and the runner survives corpus modules that crash at import
   (e.g. `sqrt(x**2 + 2*x + 1)/(x + 1)` appearing verbatim).  Any
   cleanup must be structural (cancel-level), never Expr simplify.
 - Full-corpus post-fix sweep (queued behind the pre-fix audit sweep,
-  against `91db1c31ee`) and the mismatch table for the run gist;
+  against `91db1c31ee`) and the mismatch table for the run log;
   regression tests for any *new* wrong answers the sweep finds.
 
 ### Bugs this corpus has already surfaced (all fixed, with tests)

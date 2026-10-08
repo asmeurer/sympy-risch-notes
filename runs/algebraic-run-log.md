@@ -1,134 +1,24 @@
-# risch-algebraic experiment: run log
+# Rubi algebraic experiment: chronological run log
 
 Runs of sympy's `risch_integrate(f, x, algebraic=True)` (the experimental
 exp-log-tower representation of radicals, e.g. `sqrt(x)` as
-`exp(log(x)/2)`) over test corpora.  Companion to the "Experimental
-track" section of the RISCH_PLAN.md gist.
+`exp(log(x)/2)`) over test corpora, in the order they happened.
+Companion to the "Experimental track" section of
+[RISCH_PLAN.md](../docs/RISCH_PLAN.md) and to
+[RISCH_ALGEBRAIC_PLAN.md](../docs/RISCH_ALGEBRAIC_PLAN.md).
 
-## Summary (as of 2026-08-21)
-
-The experiment: represent radicals as exp-log towers, run the
-transcendental Risch machinery over them, degrade every nonelementary
-conclusion to a plain `Integral` (the proofs assume transcendence), and
-accept solved results only after a tower-level verification.  Since
-2026-08-18 (Run 14) this is what plain `integrate()` does by default on
-the `risch-algebraic` branch.
-
-**Where things stand** (each claim links to the run that measured it):
-
-- **Rubi radical corpus** (Runs 11-13): the numerical oracle found that
-  **40% of the pre-fix solves were wrong** (1,705 of 4,239 -- the
-  unconditional radicand split and the `is_deriv_k` principal-constant
-  rewrite); after the exact-branch-ratio fixes the full post-fix sweep
-  has **0 wrong among 4,287 solved** (4,286 at tip `518d57ad37` once
-  the one leaked-Dummy "solve" is reclassified), 425 `DERIV-OK-SPLIT`,
-  median per-case time unchanged.
-- **Hebisch exp-log corpus, 2,000 cases** (three-way comparison +
-  follow-up): the principal-branch log/exp rewrite gave 30-31
-  verified-wrong answers on every branch (incl. master); fixed on
-  `risch-rde-cancellation` (`562d069b5e`, `3c5b649612`, follow-ups
-  `0b77ab246b`, `d7dafa43c1`) -- **0 wrong, 1,851 solved, all
-  symbolically proven**.  `risch-rde-cancellation` nets +20 solved over
-  master; 12 of the 13 `PolynomialError` crashes fixed by `025e390835`.
-  Root-cause write-up: `01b-WRONG_ANSWERS.md`.
-- **Blake algebraic corpus**: 1,500-case sweep 291 solved (08-19) ->
-  303 (08-21, after the structure-guard decide-or-degrade commits),
-  **0 wrong**, master/rde-cancellation solve none; the full 3,154-case
-  pre-relaxation sweep at the plain `risch_integrate(f, x)` entry point
-  (`pretip-blake-abort-census.jsonl`): 286 solved, 485
-  `parametric_log_deriv` aborts, 197 timeouts.
-- **MIT Integration Bee official suite** (`09-mit-bee-official-risch.md`,
-  08-21): `risch-algebraic` 98 vs master 84 of 263 indefinite cases,
-  0 wrong, 0 losses.
-- **Structure-constant guards** (08-21, `15e76e361e` + `3b072169b7` on
-  `risch-algebraic`): the remaining `NotImplementedError` aborts on
-  non-rational structure constants now decide ("no relation", proven
-  irrational entry) or degrade; Hebisch 400-case spot check 365 -> 368.
-
-**Still open**: the exp-side `sympows` rewrite `exp(b*(log(const) + u))`
-for symbolic powers still takes the principal constant (not exercised
-by any corpus); the Hebisch regressions vs master named in
-`01-RISCH_BRANCH_COMPARISON.md` (the 6 `parametric_log_deriv` NIEs among
-them); Hebisch 274 (`E` and `exp(1/2)` as independent constant
-generators); constant irrational exponents on a variable base
-(`x**log(2)`) never reach the tower; the jump-correction second pass
-(`DERIV-OK-SPLIT` acceptance set); output-form cleanup.
-
-**Files in this gist**: `00` this log-book (runs in order below);
-`01`/`01b` the 2026-08-19 three-way comparison and its wrong-answer
-root-cause analysis (per-case data `branch-cmp-*.jsonl`);
-`02-rubi-audit-wrong.md` the Run 12 pre-fix WRONG table (all fixed);
-`09` the MIT Bee run (per-case data `mitbee-*.jsonl`);
-`pretip-blake-abort-census.jsonl` the full Blake sweep.
-**`zz-archive-*`** holds superseded material kept for the record:
-the 2026-08-10/11 per-case Rubi tables and their raw results
-(`zz-archive-0[3-8]-rubi-table-*.md`, `zz-archive-rubi-alg-results.jsonl`,
-`zz-archive-rubi-linear-chapter.log`) -- their SOLVED statuses predate
-the oracle and Run 12 found 40% of them wrong; the Run 3 transcendental
-A/B logs (`zz-archive-rubi-trans-wt-*.jsonl`), superseded by the Hebisch
-comparison; and `zz-archive-signum_proto2.py`, the `sgn` prototype
-superseded by the exact-ratio design (Run 11).
-
-## Original summary (2026-08-11, pre-oracle)
-
-*Kept as written.  Its "zero wrong answers" rested on the tower-level
-formal check alone; the numerical oracle of Run 12 later showed 40% of
-these solves had wrong derivatives (branch errors), and Run 13 shows
-the fixed branch back at zero with more solves.  The per-part table
-below is still the only per-chapter breakdown of the capture run.*
-
-
-The experiment: represent radicals as exp-log towers, run the
-transcendental Risch machinery over them, degrade every nonelementary
-conclusion to a plain `Integral` (the proofs assume transcendence), and
-accept solved results only after a tower-level verification (formal
-derivative identity + denominators nonzero under the tower's algebraic
-relations).  Test corpus: the Rubi test suite, ~16,800 attemptable
-radical cases.
-
-**Headline numbers** (details in the runs below; per-case tables in the
-`zz-archive-0*-rubi-table-*.md` files, pre-fix):
-
-- **970 integrals solved that sympy's non-Risch `integrate()` cannot do**
-  (`SOLVED-NEW`), plus 2,771 solved by both.  **Zero wrong answers and
-  zero false nonelementary claims** across the whole corpus.
-- Single-radical families solve at 40–50%; the classic collections
-  (Timofeev, Hearn, Bronstein) contribute 9 concrete new solves.
-- The transcendental A/B on the radical-free exp-log chapters (master
-  vs the `risch-rde-cancellation` branch): **zero regressions, five
-  improvements** (four crashes become decided results, two of them
-  newly solved).
-
-**Results by corpus part** (uniform capture run, per-case data in
-the `zz-archive-0*-rubi-table-*.md` files):
-
-| corpus part | attempted | SOLVED-NEW | SOLVED-both | partial | timeout | NIE |
-|---|---|---|---|---|---|---|
-| 0. Independent suites | 632 | 9 (1%) | 110 (17%) | 345 (55%) | 3 (0%) | 165 (26%) |
-| 1.1.1 Linear binomials | 3377 | 159 (5%) | 615 (18%) | 2235 (66%) | 353 (10%) | 15 (0%) |
-| 1.1.2-4 Other binomials | 5144 | 143 (3%) | 1102 (21%) | 3735 (73%) | 141 (3%) | 23 (0%) |
-| 1.2 Trinomials | 6148 | 617 (10%) | 874 (14%) | 4451 (72%) | 203 (3%) | 3 (0%) |
-| 1.3 Miscellaneous | 726 | 36 (5%) | 49 (7%) | 566 (78%) | 11 (2%) | 64 (9%) |
-| 2-3 Exp/log radicals | 131 | 6 (5%) | 21 (16%) | 82 (63%) | 1 (1%) | 21 (16%) |
-| **all** | **16158** | **970 (6%)** | **2771 (17%)** | **11414 (71%)** | **712 (4%)** | **291 (2%)** |
-
-**Key findings**:
-
-- Input representation (`1/sqrt(x)` vs `sqrt(x)/x` etc.) and tower
-  order have **negligible** effect on solvability (1 flip in 250
-  unsolved samples) — no retry driver needed.
-- **~95% of the unsolved mass is the genuine algebraic-Risch frontier**:
-  the per-power rischDE subproblems correctly find no solution of
-  transcendental shape, because the true antiderivatives need terms
-  mixing several radical generators.  Finishing the exp-log gaps buys
-  only the residue-side slice (~4%), the `parametric_log_deriv`
-  undecidables (47 cases), and part of the timeouts; the rest needs
-  real algebraic machinery (Trager / Bronstein Vol. II).
-- The corpus flushed out three genuine sympy master bugs (an spde()
-  infinite loop, malformed Polys in is_log_deriv_k_t_radical_in_field(),
-  and the ratint_logpart() PolynomialError of issue #26502) plus two
-  crashes in the experimental branch itself — all fixed except the
-  octic tail of #26502.
+**The current state of every corpus and branch is in
+[README.md](README.md)**; this file keeps the reasoning behind each
+decision.  Runs 0-14 used the ad-hoc `risch_test_suite_runner.py` on a
+clone of the Rubi corpus; from the three-way comparison of 2026-08-19
+on, runs use the
+[sympy/integration-test-suites](https://github.com/sympy/integration-test-suites)
+runner.  The pre-fix per-case material from Runs 1-3 (the Rubi tables,
+their raw results and the transcendental A/B logs -- Run 12 found 40%
+of their SOLVED entries wrong) and the signum prototype of Run 10 were
+not carried into this repository; they remain in the
+[frozen gist](https://gist.github.com/asmeurer/b4b8ceb7c364566f5e7a3d07ce133300)
+and in this repository's import commit.
 
 ## Configuration (2026-08-10)
 
@@ -177,9 +67,7 @@ Totals: **3,385 attempted, 782 SOLVED (23%), 0 CLAIMS-NE, 0 errors.**
 | 1.1.1.6 (three linear factors) | 71 | — | 71: 0 S, 38 p, 33 t | profiling target |
 | 1.1.1.7 `P(x) (a+b x)^m ...` | 35 | — | 35: 0 S, 35 t | profiling target |
 
-(S = SOLVED, p = partial, t = timeout.  Full raw log, including
-per-shard SOLVED listings and timing progress lines, in
-`zz-archive-rubi-linear-chapter.log` below.)
+(S = SOLVED, p = partial, t = timeout.)
 
 Reading of the results:
 
@@ -234,17 +122,6 @@ SOLVED-NEW (e.g. integrands built over log((a+b*x)/(c+d*x)) towers
 that only risch solves), and one master timeout becomes a decided
 nonelementary result.  In this mode a NonElementaryIntegral result is
 a legitimate proof (the towers are genuinely transcendental).
-
-## Full per-case tables
-
-*Archived 2026-08-21 (`zz-archive-` prefix): these are the 2026-08-10/11
-pre-fix capture; Run 12 found 40% of their SOLVED entries wrong and
-Run 13 is the post-fix measurement.  Kept for the record only.*
-
-Every attempted algebraic case with SymPy expression, rendered math,
-and status, split by corpus part: see the zz-archive-0*-rubi-table-*.md files in
-this gist (SOLVED-NEW bolded).  Raw per-case data:
-`zz-archive-rubi-alg-results.jsonl` / `zz-archive-rubi-trans-wt-*.jsonl`.
 
 ## Run 4: representation and tower-order sensitivity — 2026-08-11
 
@@ -412,7 +289,7 @@ continuity -- Jeffrey's "domain of maximum extent".  Jeffrey 1993 §2
 additionally gives the rule for combining logarithms with fractional
 coefficients: `a*ln f1 + b*ln f2 -> (m/n)*ln(f1**p * f2**q)`.
 
-**Prototype result** (`zz-archive-signum_proto2.py`): the approach works end to end
+**Prototype result** (`signum_proto2.py`, archived): the approach works end to end
 on our towers.
 - Jeffrey's Example 1 reproduced exactly: `3*x**2*sqrt(1+1/x**2)` ->
   `sgn(x)*((1+x**2)**(3/2) - 1)`, J = 1.
@@ -495,13 +372,6 @@ DERIV-OK + 5 DERIV-OK-SPLIT; one extra 5 s timeout), binomials
 unchanged 82/82.  Regression tests in
 `test_risch_integrate_algebraic_branches()`.
 
-### In progress
-
-Full-corpus audit sweep of the pre-fix branch (all chapters algebraic
-mode + transcendental control on t_2/t_3), then the post-fix re-sweep;
-mismatch table to follow as a gist page.  Not yet run: `positive=True`
-assumption-sensitivity diff; special-value instantiation.
-
 ### Run 11 addendum: jump corrections landed
 
 Commit `7e1b26b875` ("Correct the jumps left by branch-ratio
@@ -532,123 +402,51 @@ trinomials 17 SOLVED-both concrete = 15 DERIV-OK + 2 DERIV-OK-SPLIT
 DERIV-OK; binomials unchanged 82/82 DERIV-OK.  No solve-rate or
 timing change.
 
-### Run 11 addendum 2: review fixes
+### Run 11 addendum 2: review fixes (five rounds, loop closed)
 
-Commits `c0167ba61a` ("Fix four review findings in the branch-ratio
-machinery") and `91db1c31ee` ("Vet sign-carrying results under every
-ratio assignment"); oracle `06c2ef9` (complex sample points on odd
-64ths, off plausible `Re(x) == r` correction-discontinuity lines).
+The roborev/codex reviews of the Run 11 commits ran five rounds --
+commits `c0167ba61a` ("Fix four review findings in the branch-ratio
+machinery"), `91db1c31ee` ("Vet sign-carrying results under every
+ratio assignment"), `5f019bb64c`, `098641086e` ("Refine the
+sign-carrying vetting into _nontrans_vet()") and `b40b70ce0a` ("Treat
+all entire functions as safe in _nontrans_vet()"); oracle `06c2ef9`
+(complex sample points on odd 64ths, off plausible `Re(x) == r`
+correction-discontinuity lines).  Every finding was confirmed and
+fixed, and the corpus pilots were unchanged through all of them (same
+solves, verdicts, timing):
 
-The roborev/codex reviews of the two Run 11 commits found four real
-problems; all confirmed (two demonstrated: the `_s0` Dummy leak via
-the `_exp_part()` restart, and the sign()-correction complex-axis
-breakage at 1+I) and fixed:
+1. Round 1 (`c0167ba61a`, `91db1c31ee`): the `_exp_part()` restart
+   leaked the `_s0` ratio Dummy and dropped `sign_consts`/`backsubs`
+   (now preserved, with the non-transcendental flag); introducing a
+   ratio constant marks the tower non-transcendental even when every
+   radical collapses, and the total result is vetted under every ratio
+   assignment before substitution (a `ratint()` over QQ(s) candidate
+   had been nan on all of x > -1 while the integrand was 1 there);
+   `_nontrans_accept()` checks denominators under every root-of-unity
+   assignment (`s - 1` is formally nonzero mod `s**2 - 1` but the ratio
+   equals 1 on whole regions); jump corrections use
+   `(x - r)/sqrt((x - r)**2)` -- `sign(x - r)` on the real line, locally
+   constant on C off `Re(x) == r` -- restoring complex-point validity.
+2. Round 2 (`5f019bb64c`): only ratio constants occurring in the
+   checked expressions are enumerated, so a constant without exact
+   algebraic roots of unity (order >= 7) no longer rejects every
+   candidate -- `(x**2 + 2*x + 1)**(1/7)` integrates instead of
+   degrading; breakpoints come from `real_roots()` instead of
+   `roots()`, and corrections are abandoned for factors that cannot
+   provide an exact real-root set (`sqrt((x**5 - x - 1)**2)` gets its
+   jump corrected at the `CRootOf` breakpoint).
+3. Round 3 (`098641086e`): the vetting is factored into
+   `_nontrans_vet()` and unit-tested; `exp` arguments contribute only
+   their singular positions (no more over-rejection of entire
+   functions), and `RootSum` defining polynomials join the scan with
+   their leading coefficients checked under every assignment.
+4. Rounds 4-5 (`b40b70ce0a`): all entire functions are treated as safe,
+   not just `exp` (tan, cot, coth keep their poles and atan its +-I
+   singularities); reviewed clean (job 763).
 
-1. restart preserves `sign_consts`/`backsubs` (and the
-   non-transcendental flag);
-2. introducing a ratio constant marks the tower non-transcendental
-   even when every radical collapses (results are only generic in s),
-   and -- advisor follow-up on the same finding -- the total result is
-   vetted under every ratio assignment before substitution, closing
-   the base-case path where `ratint()` over QQ(s) divided by
-   s-polynomials vanishing at attained values (a constructed
-   candidate was nan on all of x > -1 while the integrand was 1
-   there);
-3. `_nontrans_accept()` checks denominators under every root-of-unity
-   assignment, since `s - 1` is formally nonzero mod `s**2 - 1` but
-   the ratio equals 1 on whole regions;
-4. jump corrections use `(x - r)/sqrt((x - r)**2)` (sign(x - r) on
-   the real line, locally constant on C off `Re(x) == r`), restoring
-   complex-point validity, with side-sampling offsets certified
-   exactly against neighboring breakpoints.
-
-Corpus pilots unchanged through all fixes (same solves, verdicts,
-timing).  The post-fix full sweep is queued against `91db1c31ee`.
 Analysis note for the sweeps: results unevaluatable on a whole region
 surface as UNDECIDED-COVERAGE (skipped points), not WRONG -- treat
 that bucket as a red flag, not noise.
-
-### Run 11 addendum 3: second-round review fixes
-
-Commit `5f019bb64c` ("Address the second-round review of the
-branch-ratio fixes"), from the roborev/codex reviews of the previous
-two fix commits (both findings relevant and fixed):
-
-1. The per-assignment checks rejected every candidate whenever any
-   ratio constant lacked exact algebraic roots of unity (order >= 7),
-   even where the constant could not affect the check.  Now only
-   constants occurring in the checked expressions are enumerated
-   (denominators for the acceptance filter; denominator + function
-   arguments + exponents for the final vetting -- purely
-   numerator-polynomial occurrences cannot produce singularities).
-   `(x**2 + 2*x + 1)**(1/7)` integrates now instead of degrading.
-2. Jump-correction breakpoints came from `roots()`, which omits real
-   roots inexpressible in radicals; an omitted root could let a side
-   sample cross an unrecognized breakpoint and certify a nonlocal
-   ratio value (continuity-only damage: corrections are locally
-   constant, so the derivative was never at risk).  `real_roots()`
-   now supplies the complete exact real-root set, and corrections are
-   abandoned entirely for factors that cannot provide one.
-   `sqrt((x**5 - x - 1)**2)` now gets its jump corrected at the exact
-   `CRootOf` breakpoint (jump 8e-6 across the isolated root).
-
-Trinomial pilot unchanged again (17 + 28 solved, 0 WRONG, 2 SPLIT).
-The post-fix sweep worktree is advanced to `5f019bb64c`.  The
-corpus-clone runner/oracle repo is not under roborev (sympy only);
-those commits were reviewed by the session advisor instead.
-
-### Run 11 addendum 4: third-round review fixes
-
-Commit `098641086e` ("Refine the sign-carrying vetting into
-_nontrans_vet()"), from the review of `5f019bb64c`.  Both findings
-relevant and fixed:
-
-1. Entire-function over-rejection: every `Function` argument was
-   treated as singularity-sensitive, so an unenumerable ratio
-   constant inside an `exp()` argument still degraded the result.
-   `exp` now contributes only the singular positions inside its
-   arguments -- while keeping the arguments' internal denominators
-   risky (`as_numer_denom()` cannot see into function arguments, so
-   `exp(x/(x + s))` still rejects), with nested functions, powers,
-   and exponents covered by the recursive `atoms()` walks.
-   Fractional-power bases contribute their internal denominators for
-   the same reason.
-2. `RootSum` blind spot: `RootSum` is an `Expr`, not a `Function`,
-   so ratio constants in its defining polynomial escaped the scan --
-   and a leading coefficient vanishing under an assignment silently
-   changes the root set, which no nan/zoo value check can see.
-   Defining polynomials join the scan; their LCs are checked under
-   every assignment.
-
-The vetting is factored into `_nontrans_vet()` and unit-tested
-directly (entire-arg pass, log-arg reject, hidden-denominator
-reject, RootSum LC reject/pass on quintic defining polys).  Corpus
-pilot unchanged for the fourth time.  Sweep worktree advanced to
-`098641086e`.
-
-### Run 11 addendum 5: fourth-round review
-
-Review of `098641086e` (job 760) found one Medium: only `exp` was
-recognized as entire, so `sin`/`cos`/`sinh`/`cosh` arguments were
-still scanned wholesale.  Fixed (same denominator-only handling; tan,
-cot, coth keep their poles and atan its +-I singularities, so they
-stay fully risky), with unit tests both ways.  Commit is staged and
-waiting on the signing key (retry monitor running); trig output is
-essentially absent from this pipeline (rewrite_complex converts to
-exp/log), so the sweep is unaffected either way.  The review loop has
-converged: round four found no correctness issues, only a
-completeness refinement of round three's own refinement.
-
-### Run 11 addendum 6: review loop closed
-
-`b40b70ce0a` ("Treat all entire functions as safe in _nontrans_vet()")
-signed, pushed, and reviewed clean ("No issues found", job 763).
-Severity trajectory across the five review rounds: Dummy leak +
-complex-axis correctness break -> soundness holes (zero divisors,
-base-case bypass) -> over-rejection refinements -> a refinement of a
-refinement -> clean.  The post-fix sweep worktree is at `b40b70ce0a`;
-the audit sweep is ~11k cases into t_1 with the re-sweep queued
-behind it.
 
 ---
 
@@ -657,7 +455,7 @@ behind it.
 The item-1 deliverable: every chapter in algebraic mode plus the
 transcendental control on t_2/t_3, all solved cases checked against
 the numerical oracle (`RISCH_CHECK=expected`).  7h42m serial.
-Full per-case WRONG table: `02-rubi-audit-wrong.md` in this gist.
+Full per-case WRONG table: [rubi-prefix-audit-wrong.md](rubi-prefix-audit-wrong.md).
 
 ### Headline
 
@@ -713,12 +511,6 @@ where the *integrand itself* unwinds (`Im(a+b*z)` outside
 `DERIV-OK-SPLIT` (mostly `atan`/`log` form differences vs Rubi, both
 correct) -- consistent with the branch-correctness problem being
 specific to the algebraic radicand handling, as designed.
-
-### Post-fix re-sweep
-
-Running against `97ef0340ca` (all fixes + repaired runner, so
-t_5/t_7/t_8 get covered); the success criterion is the WRONG bucket
-collapsing to zero with solve counts intact.
 
 ### Run 12 addendum: is_deriv_k review + leak findings
 
@@ -880,12 +672,13 @@ restored (45 solved / 0 wrong).
 
 ## Three-way branch comparison — 2026-08-19
 
-Full write-up in `01-RISCH_BRANCH_COMPARISON.md` in this gist; per-case data
-in the `branch-cmp-heb-*.jsonl` and `branch-cmp-blake-algebraic.jsonl`
-files.
+Full write-up in
+[branch-comparison-2026-08-19.md](branch-comparison-2026-08-19.md);
+per-case data in `data/branch-cmp-heb-*.jsonl` and
+`data/branch-cmp-blake-algebraic.jsonl`.
 
 This run moves off the ad-hoc `risch_test_suite_runner.py` onto the
-[integration-test-suites](https://github.com/asmeurer/integration-test-suites)
+[integration-test-suites](https://github.com/sympy/integration-test-suites)
 repo, which collects the Rubi corpus together with the Hebisch, Blake and
 MIT Integration Bee suites (80,063 problems) behind one runner.  Two
 things changed methodologically:
@@ -915,7 +708,7 @@ case:
   (1940) is an improvement — master was wrong there.
 - **2 new wrong answers**, cases 221 and 1704, both crashes on master
   that the branch now answers incorrectly.  *[2026-08-20: per
-  `01b-WRONG_ANSWERS.md`, these are the pre-existing principal-branch
+  [wrong-answers-root-cause.md](wrong-answers-root-cause.md), these are the pre-existing principal-branch
   rewrite defect, not a new mechanism.]*
 - **29 wrong answers are pre-existing on master** and unchanged by this
   work: ~1.6% of the Hebisch integrals `risch_integrate` claims to solve
@@ -969,7 +762,7 @@ oracle with symbolic-proof fast path):
 | SOLVED | 1845 | 1851 (all `DERIV-OK-PROVEN`) |
 | CLAIMS-NE | 0 | 0 |
 
-Still open, tracked in `01b-WRONG_ANSWERS.md` terms: the `sympows` door
+Still open, tracked in [wrong-answers-root-cause.md](wrong-answers-root-cause.md) terms: the `sympows` door
 (`exp(g*(log(const) + u))` for symbolic powers — not exercised by the
 Hebisch corpus), the 6 `parametric_log_deriv` NIE regressions vs
 master, and the 13 `error:PolynomialError` cases — the last of which
@@ -981,8 +774,8 @@ elsewhere, on `E` and `exp(1/2)` as independent constant generators.
 
 ## MIT Integration Bee official suite — 2026-08-21
 
-Write-up in `09-mit-bee-official-risch.md`; per-case data in the
-`mitbee-*.jsonl` files (master, `risch-rde-cancellation`,
+Write-up in [mit-bee-2026-08-21.md](mit-bee-2026-08-21.md); per-case
+data in the `data/mitbee-*.jsonl` files (master, `risch-rde-cancellation`,
 `risch-algebraic` through `risch_integrate`, and `risch-algebraic`
 through `risch_integrate(..., algebraic=True)`).  Headline:
 `risch-algebraic` 98 solved vs master 84 of 263 indefinite cases, zero

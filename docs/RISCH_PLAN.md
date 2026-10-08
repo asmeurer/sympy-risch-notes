@@ -84,8 +84,8 @@ Line numbers originally referred to master at 89796fa512.
   as `ratio*exp(q*u)` with an opaque ratio, so mixed `sqrt(exp(x)) +
   exp(x/2)` input is exact off the real line).  Hebisch corpus (2000,
   5 s): 31 verified-wrong → 0, 1,851 solved, all with symbolically
-  proven derivatives.  Full analysis in `01b-WRONG_ANSWERS.md` of the
-  run-log gist.
+  proven derivatives.  Full analysis in
+  `runs/wrong-answers-root-cause.md` of the sympy-risch-notes repo.
 - **`residue_reduce()` PolynomialError (issue #26502) — DONE**
   (2026-08-20, `025e390835` on `risch-rde-cancellation`): the
   Lazard-Rioboo-Trager step factored `lc_t(S_i)` as a Poly in `t`
@@ -937,8 +937,8 @@ RootSum residue coefficients are unchecked.
 `algebraic=True`): 16/30 solved, 0 wrong answers, 0 false
 nonelementary claims, no false rejections by the filter.
 
-**RUBI-scale results (2026-08-10)** (full run logs:
-https://gist.github.com/asmeurer/b4b8ceb7c364566f5e7a3d07ce133300): Francesco Bonazzi's
+**RUBI-scale results (2026-08-10)** (full run logs: `runs/` in
+https://github.com/asmeurer/sympy-risch-notes): Francesco Bonazzi's
 `Upabjojr/rubi-integration-test-suite` (66k+ cases, MIT, cloned as a
 sibling of the sympy checkout — NOT checked in) is the test-case mine;
 `risch_test_suite_runner.py` (in the clone, candidate upstream

@@ -19,10 +19,12 @@ cases: **zero verified-wrong answers; 1,851 solved, every one with a
 symbolically proven derivative.**  The analysis below describes the
 pre-fix state.
 
-2026-08-20.  Companion to `01-RISCH_BRANCH_COMPARISON.md`, which counted
+2026-08-20.  Companion to
+[branch-comparison-2026-08-19.md](branch-comparison-2026-08-19.md),
+which counted
 30–31 verified-wrong answers per branch on the 2,000-case Hebisch run.
 This document identifies every one of them.  Per-case data is in the
-`branch-cmp-heb-*.jsonl` files; the raw runs carry the full
+`data/branch-cmp-heb-*.jsonl` files; the raw runs carry the full
 integrand/answer/expected strings.
 
 ## TL;DR

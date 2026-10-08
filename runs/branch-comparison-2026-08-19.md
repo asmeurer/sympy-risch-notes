@@ -1,20 +1,24 @@
 # Risch branch comparison: master vs risch-rde-cancellation vs risch-algebraic
 
 2026-08-19.  A three-way A/B/C of the Risch work, run from the new
-[integration-test-suites](https://github.com/asmeurer/integration-test-suites)
-corpus rather than ad-hoc scripts.  Companion to the run log in this gist
-and to the RISCH_PLAN.md / RISCH_ALGEBRAIC_PLAN.md gists.
+[integration-test-suites](https://github.com/sympy/integration-test-suites)
+corpus rather than ad-hoc scripts.  Companion to
+[algebraic-run-log.md](algebraic-run-log.md) and to
+[RISCH_PLAN.md](../docs/RISCH_PLAN.md) /
+[RISCH_ALGEBRAIC_PLAN.md](../docs/RISCH_ALGEBRAIC_PLAN.md).
 
 **Status, 2026-08-21.**  The wrong-answer counts below are the pre-fix
 measurement: the 30-31 verified-wrong answers per branch were one
-principal-branch defect (root-caused in `01b-WRONG_ANSWERS.md`) and are
+principal-branch defect (root-caused in
+[wrong-answers-root-cause.md](wrong-answers-root-cause.md)) and are
 fixed on `risch-rde-cancellation` (`562d069b5e`, `3c5b649612` and
 follow-ups); the 2,000-case rerun has zero wrong answers and 1,851
-solved (see the follow-up section of `00-RISCH_ALGEBRAIC_RUNS.md`).
+solved (see the follow-up section of
+[algebraic-run-log.md](algebraic-run-log.md)).
 The 13 `PolynomialError` crashes are down to 1 (`025e390835`).  Still
 open from this run: the 8 named regressions vs master (6 of them
-`parametric_log_deriv` NIEs).  Per-case data in `branch-cmp-*.jsonl`
-is unchanged (pre-fix).
+`parametric_log_deriv` NIEs).  Per-case data in
+`data/branch-cmp-*.jsonl` is unchanged (pre-fix).
 
 ## Headline
 
@@ -29,7 +33,8 @@ is unchanged (pre-fix).
 - **The branch introduces 2 new wrong answers** (cases 221 and 1704,
   both `error -> SOLVED` on master, i.e. a crash became a wrong result).
   This is the finding that most wants attention.
-  *[Update 2026-08-20: root-cause analysis in `01b-WRONG_ANSWERS.md`
+  *[Update 2026-08-20: root-cause analysis in
+  [wrong-answers-root-cause.md](wrong-answers-root-cause.md)
   shows these are the pre-existing principal-branch log rewrite defect,
   reached once the crash was fixed — the branch adds no new failure
   mechanism.]*
@@ -50,7 +55,7 @@ is unchanged (pre-fix).
 | `master` | `bd4ee7fc6d` |
 | `risch-rde-cancellation` | `bf88623d8e` (55 commits ahead of master) |
 | `risch-algebraic` | `757fa4fa7e` (82 ahead; contains rde-cancellation) |
-| corpus | `asmeurer/integration-test-suites` at `b0a1083` |
+| corpus | `sympy/integration-test-suites` at `b0a1083` |
 | engine | `risch_integrate`; on the Blake run, `algebraic=True` |
 | per-case limit | 5 s, enforced by killing a forked child (`--isolate`) |
 | verification | numerical oracle, 20 s per instantiation |
