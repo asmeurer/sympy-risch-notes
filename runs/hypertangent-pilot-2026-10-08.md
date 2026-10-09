@@ -128,6 +128,20 @@ pilot:
 - the output form is the documented "shifted angles give `tan(1/2)`
   coefficients" limit of Phase 5e, at corpus scale.
 
+**Substituting values for the constants does not help** (checked the
+same day, in answer to the idea of a random-substitution runner mode).
+The 60 no-oracle cases rerun with `a = 3/7, b = 5/3` (10 s each) give
+the same classification on every case but 6 (4 solves become timeouts,
+2 timeouts become `HeuristicGCDFailed`), with per-case times within
+0.8-1.5x of the symbolic ones: the cost is the transcendental constant
+`tan(a/2)`, which survives substitution as `tan(3/14)`, not the
+symbols `a`, `b`.  `sin(5x/3 + 3/7)^6` even takes over 60 s against
+6.9 s symbolic.  The converse experiment pins the cause: with a shift
+whose half-angle tangent is rational, `a = 2 atan(1/3)` so that
+`tan(a/2) = 1/3`, `sin(a + 5x/3)^6` and `^8` take 0.2-0.3 s and come
+back in sin/cos form, and the `sec^6(a + bx)/sin(a + bx)` gcd crash
+solves in 0.3 s.
+
 The alternative is to keep a single constant shift inside the
 generator, `t = tan((a + bx)/2)` with `Dt = (b/2)(1 + t²)`, and only
 fall back to the split when the same base angle occurs with several
