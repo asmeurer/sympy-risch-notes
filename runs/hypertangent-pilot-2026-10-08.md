@@ -82,9 +82,8 @@ All 157 answers verified (153 `DERIV-OK-PROVEN`, 2 `DERIV-OK-SPLIT`,
   field; that was the `ExactQuotientFailed` crash below (and the
   book's own Example 8.4.1 system (8.11) crashed the same way).  Both
   pilot crashes now integrate correctly (verified by differentiation);
-  the `zoo`/`EX` one went away with the same fix, so it was downstream
-  of the wrong coupled-system solution rather than a separate
-  mechanism.
+  the `zoo`/`EX` one stopped crashing with the same fix without being
+  traced separately, so its mechanism is not confirmed.
 - **Crashes** (master NIE'd both, so new classes, not regressions):
   `exp(cos x) cos(2x + sin x)` → `PolynomialDivisionFailed` dividing
   `[EX(zoo)]` by `[EX(1)]` (a `zoo` reaches an `EX` domain);
