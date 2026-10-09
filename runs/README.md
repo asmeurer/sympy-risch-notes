@@ -74,22 +74,34 @@ capability is the experimental branch's.
 | master | `8454607030` | 2026-08-21 | 84 | 0 | 1 | [mit-bee-2026-08-21.md](mit-bee-2026-08-21.md) |
 | risch-rde-cancellation | `d7dafa43c1` | 2026-08-21 | 84 | 0 | 0 | |
 | risch-algebraic | `3b072169b7` | 2026-08-21 | **98** | 36 | 0 | |
+| risch-hypertangent | `66bc72d6b8` | 2026-10-08 | **157** | 0 | 0 (+1 wrong CLAIMS-NE) | [hypertangent pilot](hypertangent-pilot-2026-10-08.md) |
 
 Master's one wrong answer is the same principal-branch defect, fixed on
 both branches.  The suite has almost no exp-log tower content, so the
-cancellation work is not exercised here; the 14 new solves are the
-algebraic-function subset.
+cancellation work is not exercised here; the 14 algebraic-branch solves
+are the algebraic-function subset, and the 73 hypertangent solves are
+the real-trig subset (0 lost, all 157 verified).  The hypertangent
+branch also claims `sin(x + sin x) − sin(x − sin x)` nonelementary (it
+is `−2 cos(sin x)`), and crashes on two nested-trig cases.
 
-### Not measured: `risch-hypertangent`
+### Rubi chapter 4 `trig-rational` (6,931 indefinite cases; 360 parameter-free)
 
-The Phase 5 branch (tip `66bc72d6b8`, 2026-08-22, stacked on
-`risch-rde-cancellation`) has had no corpus run.  Its verification so far
-is the sympy test suite (`test_rde`/`test_prde`/`test_risch`, the full
-`sympy/integrals` suite) and the Bronstein examples pinned as tests
-(5.10.1-5.10.3, 6.5.3, 6.6.1, 8.4.1, Ex. 5.6 f).  The natural first run
-is the real-trig slices: the Rubi chapter 4 `trig-rational` filter
-(7,293 indefinite cases) and the MIT Bee indefinite section.  Hebisch is
-exp-log only and will not exercise it.
+| branch | sympy commit | date | slice | SOLVED | WRONG | source |
+|---|---|---|---|---|---|---|
+| risch-hypertangent | `66bc72d6b8` | 2026-10-08 | first 200, oracle, 5 s | 4 (proven); 190 "timeout", 103 of them the oracle's; 6 `HeuristicGCDFailed` | 0 | [hypertangent pilot](hypertangent-pilot-2026-10-08.md) |
+| risch-hypertangent | `66bc72d6b8` | 2026-10-08 | first 60, no oracle, 10 s | 37 (unverified; 10 spot-checked numerically); 23 timeout | — | same |
+
+Pilot only.  Nearly every case is `f(a + bx)` with symbolic `a`, `b`,
+and the tower builder splits the shift off as a `tan(a/2)` constant;
+the resulting coefficient growth is behind the timeouts, the gcd
+failures and the slow oracle.  A full run waits on that tower decision.
+
+### Not measured: `risch-hypertangent` on Hebisch
+
+The Phase 5 branch has had no exp-log regression run.  Hebisch does not
+exercise the tangent code, but the pilot shows the new tower code
+reaching shared machinery (`EX` domains, `splitfactor`), so the 2,000
+cases against the 1,851 / 0-wrong baseline are the next thing to run.
 
 ## Open items (as of 2026-08-21)
 
@@ -111,6 +123,7 @@ exp-log only and will not exercise it.
 | [branch-comparison-2026-08-19.md](branch-comparison-2026-08-19.md) | three-way master / rde-cancellation / algebraic comparison on Hebisch and Blake |
 | [wrong-answers-root-cause.md](wrong-answers-root-cause.md) | all 32 Hebisch wrong answers traced to the principal-branch rewrite |
 | [mit-bee-2026-08-21.md](mit-bee-2026-08-21.md) | the three branches on the MIT Integration Bee official suite |
+| [hypertangent-pilot-2026-10-08.md](hypertangent-pilot-2026-10-08.md) | `risch-hypertangent` on MIT Bee and a Rubi trig slice: the first Phase 5 measurement, and why the Rubi trig chapters wait on the shift-handling decision |
 | [rubi-prefix-audit-wrong.md](rubi-prefix-audit-wrong.md) | Run 12's per-case table of the 1,705 pre-fix wrong answers (all fixed) |
 | [data/](data/README.md) | per-case JSONL results for the runs above |
 

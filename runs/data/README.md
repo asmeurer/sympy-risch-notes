@@ -19,6 +19,13 @@ the classification (`SOLVED`, `partial`, `NIE`, `timeout`, `error:*`,
 | `mitbee-risch-rdecancel.jsonl` | same | same | risch-rde-cancellation `d7dafa43c1`, engine `risch` | `4d1aacc` | 263 |
 | `mitbee-risch-algbranch.jsonl` | same | same | risch-algebraic `3b072169b7`, engine `risch` | `4d1aacc` | 263 |
 | `mitbee-rischalg-algbranch.jsonl` | same | same | risch-algebraic `3b072169b7`, engine `risch_algebraic` | `4d1aacc` | 263 |
+| `mitbee-hypertangent.jsonl` | [hypertangent pilot](../hypertangent-pilot-2026-10-08.md), 2026-10-08 | same | risch-hypertangent `66bc72d6b8`, engine `risch` | `871364f` | 263 |
+| `rubi4-hypertangent.jsonl` | same | rubi `--source-prefix 4 --filter trig-rational`, indefinite, first 200 | same | `871364f` | 200 |
+| `rubi4-nocheck.jsonl` | same | same slice, first 60, **10 s, no oracle** (`result` unverified) | same | `871364f` | 60 |
+
+In `rubi4-hypertangent.jsonl` a `timeout` row at about 30 s is a child
+killed after the oracle check overran the budget, not an integration
+timeout (those are the rows at about 5 s).
 
 The Hebisch and Blake files are compact (`cls`, `i`, `s`, `v`): the full
 integrand/answer/expected strings are in the raw runner output, not
