@@ -404,6 +404,43 @@ Line numbers originally referred to master at 89796fa512.
     the same kind: the real-`k` cancellation sharpening in
     `_special_denom_cancel_bound()` only looks for `z ∈ k*`, not
     `k(√−1)*` (commented there), so it can under-lower the bound.
+  - 2026-10-09, investigation only (no code change): `_tower_has_I()`
+    is a syntactic `.has(I)` check and is insufficient for algebraic
+    constants that generate `√−1` without spelling it, e.g.
+    `(-1)**(1/4)` (`ζ8`, with `ζ8² = I`), `(-1)**(1/8)`,
+    `CRootOf(x**4 + 1, 0)`, `(-4)**(1/4)`.  Demonstrated at the function
+    level: `coupled_DE_system()` with `f = (0, 1)`, `t = tan x`, and the
+    `ζ8`-valued right-hand side of the solution `(ζ8 t, ζ8³ t)` returns
+    `(0, 0)` with nonzero residuals (the `I → −I` "real part" of `y = 0`
+    is taken because `_tower_has_I` is False).  Not demonstrated
+    end-to-end: `risch_integrate` crashes earlier on such inputs.
+    The larger, pre-existing gap that masks it: **algebraic irrational
+    constants are not treated as algebraic numbers at all**.  `Poly`
+    puts `sqrt(2)`, `2**(1/4)`, `cos(pi/8)`, `ζ8` in domain `EX`, and
+    the ~80 bare `cancel(expr)` calls in risch/rde/prde/cde take
+    `sqrt(2)` as a generator (`cancel((2 - t**2)/(3*t + 3*sqrt(2)))`
+    does not reduce), so on this branch `risch_integrate` gives
+    `AttributeError` (`p.as_poly(t)` is None in
+    `integrate_hypertangent`) for `1/(tan x + sqrt(2))` and false
+    nonelementary claims for `1/(tan² x + sqrt(2))`, every `2**(1/4)`
+    and `cos(pi/8)` probe, and `1/(tan² x + sqrt(2)*I)`; on master the
+    exp path has the same disease (`1/(exp(x) + sqrt(2))` leaves the
+    constant remainder `sqrt(2)/2` and calls it nonelementary) plus a
+    `CoercionFailed` (ZZ_I not promoted to QQ_I in `residue_reduce`'s
+    `mul_ground`) for `1/((1 + I)*exp(x) + 1)`.  `integrate()` is
+    unaffected on both (heuristics answer first; Risch is last resort).
+    Over `EX` the irreducibility of `t² + 1` is not even decidable
+    consistently (`factor_list` keeps it whole, `gcd` with `t - I`
+    splits it), which is why only a syntactic check was possible.
+    Fix direction (not started): build the coefficient domain as
+    `QQ.algebraic_field(*algebraic atoms).frac_field(*lower gens)`
+    explicitly (`Poly(..., extension=True)` falls back to `EX` as soon
+    as a symbol or lower generator is present) and replace
+    `_tower_has_I` by factoring `t² + 1` over that domain; verified on
+    every probe constant, including `ζ6` and `cos(pi/8)` staying
+    irreducible and `(-4)**(1/4)` splitting (where
+    `factor_list(..., extension=z)` raises `NotInvertible`, a separate
+    polys bug).
 
 Key discoveries along the way, so nobody re-derives them:
 
