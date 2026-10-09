@@ -130,7 +130,9 @@ Options, any order:
   (exact, no branch constants; removes the `rewrite_complex=True`
   requirement for sinh/cosh/tanh/coth) — small;
 - (b) nested tan-under-tan cancellation (the `k(√−1)` in-field/structure
-  calls at a tan level currently raise NotImplementedError honestly);
+  calls at a tan level currently raise NotImplementedError honestly;
+  the special-denominator and coupled-system parts over `k(√−1)` are
+  done, `1ad2ea09da`);
 - (c) Phase 6: wire up `integrate_nonlinear_no_specials`, decide the
   `other_linear` policy;
 - (d) prep the Phase 5 PR branch/body (Aaron opens PRs himself).

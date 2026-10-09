@@ -392,6 +392,18 @@ Line numbers originally referred to master at 89796fa512.
     non-complex branch (exact, no branch issue), and nested tan-under-tan
     cancellation (the `k(√−1)` in-field/structure calls at a tan level
     raise NotImplementedError honestly).
+  - 2026-10-09, `1ad2ea09da`: the RDE over `k(√−1)(t)` for a hypertangent
+    `t` (what a coupled system over `k(t)` becomes) now uses the special
+    polynomials `t ± √−1` in `special_denom()`/`prde_special_denom()`
+    (Bronstein Exercise 6.1, Example 8.4.1) and `coupled_DE_system()`/
+    `param_coupled_DE_system()` solve the conjugate equation too when
+    `√−1` is in the field (the `I → −I` "real part" is not a solution
+    there).  Fixes the pilot's wrong nonelementary claim and both
+    crashes; `cancel_tan()` needed no change (its projection only needs
+    `{1, t}` to be a basis of `k[t]/(t² + 1)`).  Known remaining gap of
+    the same kind: the real-`k` cancellation sharpening in
+    `_special_denom_cancel_bound()` only looks for `z ∈ k*`, not
+    `k(√−1)*` (commented there), so it can under-lower the bound.
 
 Key discoveries along the way, so nobody re-derives them:
 

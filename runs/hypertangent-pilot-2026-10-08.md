@@ -71,7 +71,20 @@ All 157 answers verified (153 `DERIV-OK-PROVEN`, 2 `DERIV-OK-SPLIT`,
   builder, decides wrongly.  Nested tangent, denominator purely the
   special polynomial `1 + t₁²`, `η = −t₀²/(1 + t₀²)` nonconstant.  This
   is the one correctness failure of the pilot and is distinct from the
-  documented nested-tan `NotImplementedError`.
+  documented nested-tan `NotImplementedError`.  **Fixed 2026-10-09
+  (`1ad2ea09da`)**: the coupled system over `Q(x)(t₀)` is solved as a
+  Risch differential equation over a field containing `√−1`, where the
+  special polynomials of `t₀` are `t₀ ± √−1`, not `t₀² + 1`;
+  `special_denom()` missed the `(t₀ + √−1)²` denominator of the
+  solution (Bronstein Exercise 6.1, used in his Example 8.4.1).  The
+  same root cause made `coupled_DE_system()` take the "real part" of
+  a solution by `I → −I`, which is not a solution once `I` is in the
+  field; that was the `ExactQuotientFailed` crash below (and the
+  book's own Example 8.4.1 system (8.11) crashed the same way).  Both
+  pilot crashes now integrate correctly (verified by differentiation);
+  the `zoo`/`EX` one went away with the same fix, so it was downstream
+  of the wrong coupled-system solution rather than a separate
+  mechanism.
 - **Crashes** (master NIE'd both, so new classes, not regressions):
   `exp(cos x) cos(2x + sin x)` → `PolynomialDivisionFailed` dividing
   `[EX(zoo)]` by `[EX(1)]` (a `zoo` reaches an `EX` domain);

@@ -81,8 +81,10 @@ both branches.  The suite has almost no exp-log tower content, so the
 cancellation work is not exercised here; the 14 algebraic-branch solves
 are the algebraic-function subset, and the 73 hypertangent solves are
 the real-trig subset (0 lost, all 157 verified).  The hypertangent
-branch also claims `sin(x + sin x) − sin(x − sin x)` nonelementary (it
-is `−2 cos(sin x)`), and crashes on two nested-trig cases.
+branch also claimed `sin(x + sin x) − sin(x − sin x)` nonelementary (it
+is `−2 cos(sin x)`), and crashed on two nested-trig cases; both fixed
+2026-10-09 (`1ad2ea09da`, special polynomials `t ± √−1` and the
+conjugate equation in the coupled-system solver, see the pilot log).
 
 ### Rubi chapter 4 `trig-rational` (6,931 indefinite cases; 360 parameter-free)
 
